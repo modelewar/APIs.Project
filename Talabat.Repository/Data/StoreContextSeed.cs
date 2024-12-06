@@ -15,6 +15,7 @@ namespace Talabat.Repository.Data
         {
             if (!dbContext.ProductBrands.Any())
             {
+
                 var BrandsData = File.ReadAllText("../Talabat.Repository/Data/DataSeed/brands.json");
                 var Brands = JsonSerializer.Deserialize<List<ProductBrand>>(BrandsData);
                 if (Brands?.Count>0)
