@@ -8,7 +8,7 @@ using Talabate.Core.Entites;
 
 namespace Talabat.Core.Specifications
 {
-    internal class BaseSpecification<T> : ISpecifications<T> where T : BaseEntity
+    public class BaseSpecification<T> : ISpecifications<T> where T : BaseEntity
     {
         public Expression<Func<T, bool>> Criteria { get   ; set   ; }
         public List<Expression<Func<T, object>>> Includes { get  ; set ; } = new List<Expression<Func<T, object>>>();
