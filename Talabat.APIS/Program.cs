@@ -67,6 +67,8 @@ namespace Talabat.APIs
             }
 
 
+            app.UseStaticFiles();
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
