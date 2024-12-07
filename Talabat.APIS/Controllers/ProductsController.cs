@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Talabat.APIS.DTOs;
+using Talabat.APIS.Errors;
 using Talabat.Core.Entites;
 using Talabat.Core.Specifications;
 using Talabate.Core.Entites;
@@ -32,6 +33,7 @@ namespace Talabat.APIs.Controllers
         {
             var Spec = new ProductWitthBrandAndTypeSpecification(id);
             var Product = await _productRepo.GetByIdWithSpecAsync(Spec);
+            if (Product == null) return NotFound(new ApiResponse(404));
             var MappedProduct = _mapper.Map<Product , ProductToReturnDto>(Product);
 
             return Ok(MappedProduct);
