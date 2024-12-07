@@ -4,6 +4,8 @@ using Talabat.Repository.Data;
 using Talabat.Core.Entites;
 using Talabate.Core.Repositories;
 using Talabat.APIS.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using Talabat.APIS.Errors;
 
 namespace Talabat.APIs
 {
@@ -30,6 +32,23 @@ namespace Talabat.APIs
 
            // builder.Services.AddAutoMapper(M=>M.AddProfile(new MappingProfile()));
            builder.Services.AddAutoMapper(typeof(MappingProfile));
+           builder.Services.Configure<ApiBehaviorOptions>(options =>
+           {
+               options.InvalidModelStateResponseFactory =(actioncontext) =>
+               {
+                   var errors = actioncontext.ModelState.Where(p => p.Value.Errors.Count()>0)
+                   .SelectMany(p => p.Value.Errors)
+                   .Select(E => E.ErrorMessage)
+                   .ToArray();
+                   var validationErrorResponse = new ApiValidtionErorrResponse() 
+                   {
+                       Errors = errors
+                   };
+
+                   return new BadRequestObjectResult(validationErrorResponse);
+               };
+           });
+
             #endregion
             var app = builder.Build();
             #region Update-Database
