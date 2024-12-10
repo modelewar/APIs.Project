@@ -62,7 +62,7 @@ namespace Talabat.APIs
             #region // Configure the HTTP request pipeline.MiddelWars
             if (app.Environment.IsDevelopment())
             {
-                app.UseMiddleware<ExeptionMiddelware>();
+               // app.UseMiddleware<ExeptionMiddelware>();
                 app.AddSwaggerMiddlewars();
             }
 
