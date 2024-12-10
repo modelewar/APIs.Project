@@ -6,6 +6,8 @@ using Talabate.Core.Repositories;
 using Talabat.APIS.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Talabat.APIS.Errors;
+using Talabat.APIS.Extentions;
+using Talabat.APIS.Middlware;
 
 namespace Talabat.APIs
 {
@@ -16,7 +18,6 @@ namespace Talabat.APIs
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            #region Configer Services & Services to the Container 
             //
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,35 +25,15 @@ namespace Talabat.APIs
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<StoreContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
             });
-            //builder.Services.AddScoped<IGenaricRepository<Product>,GenericRepository<Product>>();
-            builder.Services.AddScoped(typeof(IGenaricRepository<>), typeof(GenericRepository<>));
 
-           // builder.Services.AddAutoMapper(M=>M.AddProfile(new MappingProfile()));
-           builder.Services.AddAutoMapper(typeof(MappingProfile));
-           builder.Services.Configure<ApiBehaviorOptions>(options =>
-           {
-               options.InvalidModelStateResponseFactory =(actioncontext) =>
-               {
-                   var errors = actioncontext.ModelState.Where(p => p.Value.Errors.Count()>0)
-                   .SelectMany(p => p.Value.Errors)
-                   .Select(E => E.ErrorMessage)
-                   .ToArray();
-                   var validationErrorResponse = new ApiValidtionErorrResponse() 
-                   {
-                       Errors = errors
-                   };
+            builder.Services.AddApplicationServices();
 
-                   return new BadRequestObjectResult(validationErrorResponse);
-               };
-           });
-
-            #endregion
-            var app = builder.Build();
             #region Update-Database
 
+            var app = builder.Build();
             //StoreContext dbContext = new StoreContext(); //Invalide
             //await dbContext.Database.MigrateAsync();
 
@@ -81,8 +62,8 @@ namespace Talabat.APIs
             #region // Configure the HTTP request pipeline.MiddelWars
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseMiddleware<ExeptionMiddelware>();
+                app.AddSwaggerMiddlewars();
             }
 
 
@@ -98,6 +79,7 @@ namespace Talabat.APIs
 
             app.MapControllers();
             #endregion
+
             app.Run();
 
 
